@@ -5,6 +5,19 @@ let totalPages = 1;
 
 // 初始化
 document.addEventListener('DOMContentLoaded', function() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        // 不跳转，显示提示
+        document.body.innerHTML = `
+            <div class="container mt-5">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> 请先 <a href="/">登录</a> 后再访问管理后台。
+                </div>
+            </div>
+        `;
+        return; // 终止执行
+    }
+
     // 设置默认日期
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('datePicker').value = today;

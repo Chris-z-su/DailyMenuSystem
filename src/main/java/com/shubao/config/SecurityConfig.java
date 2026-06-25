@@ -31,14 +31,21 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())                           // 禁用 CSRF
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // 放行所有静态资源、登录页面、API 文档等
                         .requestMatchers(
-                                "/api/auth/**",
-                                "/api/menu/date",
+                                "/",                    // 根路径
+                                "/index.html",          // 首页
+                                "/admin.html",          // 管理页（但需要登录才能操作，页面本身可加载）
+                                "/css/**",              // CSS 目录
+                                "/js/**",               // JS 目录
+                                "/images/**",           // 图片目录
+                                "/favicon.ico",         // 图标
+                                "/api/auth/**",         // 登录接口
+                                "/api/menu/date",       // 公开菜单查询
                                 "/api/menu/month",
-                                "/api/recipe/public",
+                                "/api/recipe/public",   // 公开菜谱
                                 "/api/recipe/search",
-                                "/api/category/**",
-                                "/"
+                                "/api/category/**"      // 分类接口
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
