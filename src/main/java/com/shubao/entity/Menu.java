@@ -22,7 +22,7 @@ public class Menu {
     private Integer sortOrder;
 
     @TableLogic
-    private Integer isDeleted;
+    private Integer isDeleted; // 软删除
 
     private Integer createdBy;
     private Integer updatedBy;
