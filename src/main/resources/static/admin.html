@@ -165,14 +165,17 @@
                     <i class="fas fa-home"></i>
                     <span class="d-none d-sm-inline">首页</span>
                 </a>
-                <button class="btn btn-sm btn-primary" id="addBtn" onclick="showAddMenuModal()">
-                    <i class="fas fa-plus me-1"></i>新增菜单
-                </button>
             </div>
         </div>
 
         <!-- ===== 菜单管理 Tab ===== -->
         <div id="menuTab">
+            <div class="d-flex justify-content-between align-items-center py-4 mb-3">
+                <h4><i class="fas fa-book me-2"></i>菜单管理</h4>
+                <button class="btn btn-sm btn-primary" id="addBtn" onclick="showAddMenuModal()">
+                    <i class="fas fa-plus me-1"></i>新增菜单
+                </button>
+            </div>
             <div class="table-responsive">
                 <table class="table table-striped table-hover">
                     <thead>
@@ -195,7 +198,7 @@
 
         <!-- ===== 菜谱管理 Tab ===== -->
         <div id="recipeTab" style="display:none;">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center py-4 mb-3">
                 <h4><i class="fas fa-book me-2"></i>菜谱管理</h4>
                 <button class="btn btn-primary btn-sm" onclick="showAddRecipeModal()">
                     <i class="fas fa-plus me-1"></i>新增菜谱
@@ -206,8 +209,32 @@
 
         <!-- ===== 分类管理 Tab ===== -->
         <div id="categoryTab" style="display:none;">
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle me-2"></i>分类管理功能开发中...
+            <div class="d-flex justify-content-between align-items-center py-4 mb-3">
+                <h4><i class="fas fa-tags me-2"></i>分类管理</h4>
+                <div class="btn-group">
+                    <button class="btn btn-outline-secondary btn-sm" onclick="filterCategoryType('all')">全部</button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="filterCategoryType('MENU')">菜单分类</button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="filterCategoryType('RECIPE')">菜谱分类</button>
+                    <button class="btn btn-primary btn-sm" onclick="showAddCategoryModal()">
+                        <i class="fas fa-plus me-1"></i>新增分类
+                    </button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>名称</th>
+                        <th>类型</th>
+                        <th>排序</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="categoryTableBody">
+                    <!-- 动态加载 -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -318,6 +345,21 @@
                         <div class="col-12 col-sm-6"><label class="form-label">难度</label><select class="form-select" id="recipeDifficulty"><option value="EASY">简单</option><option value="MEDIUM" selected>中等</option><option value="HARD">困难</option></select></div>
                         <div class="col-12"><label class="form-label">描述</label><textarea class="form-control" id="recipeDescription" rows="2"></textarea></div>
                         <div class="col-12"><label class="form-label">制作方法</label><textarea class="form-control" id="recipeContent" rows="4" placeholder="详细步骤..."></textarea></div>
+                        <!-- 菜谱图片上传 -->
+                        <div class="col-12">
+                            <label class="form-label">菜谱图片</label>
+                            <div class="row g-2 mb-2" id="recipeImageList">
+                                <!-- 已上传图片将动态渲染到这里 -->
+                            </div>
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="recipeImageInput"
+                                       accept="image/*" multiple onchange="uploadRecipeImages(this)">
+                                <button class="btn btn-outline-secondary" type="button" onclick="document.getElementById('recipeImageInput').click()">
+                                    <i class="fas fa-cloud-upload-alt"></i> 选择图片
+                                </button>
+                            </div>
+                            <small class="text-muted">支持 jpg, png, gif, webp，单张不超过5MB，可多选</small>
+                        </div>
                         <div class="col-12 col-sm-6"><label class="form-label">准备时间（分钟）</label><input type="number" class="form-control" id="recipePrepTime" value="10"></div>
                         <div class="col-12 col-sm-6"><label class="form-label">烹饪时间（分钟）</label><input type="number" class="form-control" id="recipeCookTime" value="20"></div>
                         <div class="col-12"><div class="form-check"><input type="checkbox" class="form-check-input" id="recipePublic" checked><label class="form-check-label">公开此菜谱</label></div></div>
@@ -341,6 +383,40 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body" id="recipeViewContent"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 新增/编辑分类模态框 -->
+<div class="modal fade" id="categoryModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="categoryModalTitle">新增分类</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="categoryForm" onsubmit="saveCategory(event)">
+                    <input type="hidden" id="categoryId">
+                    <div class="mb-3">
+                        <label class="form-label">分类名称 *</label>
+                        <input type="text" class="form-control" id="categoryName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">类型 *</label>
+                        <select class="form-select" id="categoryType" required>
+                            <option value="MENU">菜单分类</option>
+                            <option value="RECIPE">菜谱分类</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">排序</label>
+                        <input type="number" class="form-control" id="categorySort" value="0">
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>保存</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>

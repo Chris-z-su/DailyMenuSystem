@@ -16,7 +16,7 @@ public class RecipeDTO {
 
     private String description;
     private String content;
-    private List<String> imageUrls;
+    private List<String> imageUrls;  // 存储多个图片URL
     private Integer prepTime;
     private Integer cookTime;
     private String difficulty;

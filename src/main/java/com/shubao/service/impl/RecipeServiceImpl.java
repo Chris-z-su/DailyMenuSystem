@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -39,7 +40,15 @@ public class RecipeServiceImpl extends ServiceImpl<RecipeMapper, Recipe> impleme
 
         // 处理图片列表
         if (dto.getImageUrls() != null && !dto.getImageUrls().isEmpty()) {
-            recipe.setImageUrls(JSON.toJSONString(dto.getImageUrls()));
+            // 过滤掉空字符串
+            List<String> validUrls = dto.getImageUrls().stream()
+                    .filter(url -> url != null && !url.trim().isEmpty())
+                    .collect(Collectors.toList());
+            if (!validUrls.isEmpty()) {
+                recipe.setImageUrls(JSON.toJSONString(validUrls));
+            }
+        } else {
+            recipe.setImageUrls(null);
         }
 
         recipe.setCreatedBy(userId);
@@ -57,10 +66,20 @@ public class RecipeServiceImpl extends ServiceImpl<RecipeMapper, Recipe> impleme
             throw new RuntimeException("菜谱不存在");
         }
 
-        BeanUtil.copyProperties(dto, recipe);
+//        BeanUtil.copyProperties(dto, recipe);
+        BeanUtil.copyProperties(dto, recipe, "id", "createdBy", "createdAt");
+//        recipe.setId(id);
 
         if (dto.getImageUrls() != null && !dto.getImageUrls().isEmpty()) {
-            recipe.setImageUrls(JSON.toJSONString(dto.getImageUrls()));
+            // 过滤掉空字符串
+            List<String> validUrls = dto.getImageUrls().stream()
+                    .filter(url -> url != null && !url.trim().isEmpty())
+                    .collect(Collectors.toList());
+            if (!validUrls.isEmpty()) {
+                recipe.setImageUrls(JSON.toJSONString(validUrls));
+            }
+        } else {
+            recipe.setImageUrls(null);
         }
 
         recipe.setUpdatedBy(userId);

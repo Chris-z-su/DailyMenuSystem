@@ -5,7 +5,10 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
+    # 测试
     url: jdbc:mysql://43.138.36.182:3306/daily_menu?useSSL=false&serverTimezone=Asia/Shanghai
+    # 生产
+#    url: jdbc:mysql://127.0.0.1:3306/daily_menu?useSSL=false&serverTimezone=Asia/Shanghai
     username: admin
     password: 1106135
     hikari:
@@ -18,7 +21,10 @@ spring:
 
   web:
     resources:
-      static-locations: classpath:/static/
+      static-locations:
+        - classpath:/static/
+        - file:${upload.base-path}/  # 上传图片目录
+      add-mappings: true
 
 server:
   port: 8080
@@ -44,3 +50,18 @@ mybatis-plus:
 jwt:
   secret: daily-menu-secret-key-2024
   expire: 7200000 # 2小时
+
+# 图片上传配置
+upload:
+  # 图片存储根目录（Linux/Windows 通用）
+  # Linux
+  base-path: /opt/demo/backend/DailyMenuSystem/images
+  # Windows
+#  base-path: "D:/DailyMenuSystem/images"
+  #  base-path: D:\\DailyMenuSystem\\images
+  # 访问 URL 前缀
+  access-url: /images/
+  # 允许的图片类型
+  allowed-types: image/jpeg,image/png,image/gif,image/webp
+  # 最大文件大小（MB）
+  max-size: 20

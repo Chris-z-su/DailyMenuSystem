@@ -92,3 +92,7 @@ localStorage.removeItem('token');
 localStorage.removeItem('user');
 location.reload();
 ```
+## 创建图片存储目录
+sudo mkdir -p /opt/demo/backend/DailyMenuSystem/images/recipes
+sudo mkdir -p /opt/demo/backend/DailyMenuSystem/images/menus
+sudo chown -R $(whoami):$(whoami) /opt/demo/backend/DailyMenuSystem
