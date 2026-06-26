@@ -68,3 +68,20 @@ DailyMenuSystem/
 │       └── java/
 └── pom.xml
 ```
+
+## 二、前端架构（新）
+```
+src/main/resources/static/
+├── index.html          # 用户端主页面（查看菜单）
+├── admin.html          # 管理后台页面
+├── css/
+│   └── main.css        # 全局样式（响应式）
+├── js/
+│   ├── api.js          # API接口封装（所有后端调用）
+│   ├── utils.js        # 工具函数（Toast、格式化等）
+│   ├── main.js         # 用户端主逻辑（首页）
+│   └── admin.js        # 管理后台逻辑
+└── images/
+    ├── default-food.png
+    └── default-recipe.png
+```

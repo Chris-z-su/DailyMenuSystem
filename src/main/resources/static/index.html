@@ -2,16 +2,17 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🍱 每日菜单</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>🍱 每日菜单 - 健康饮食每一天</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="/css/main.css" rel="stylesheet">
 </head>
 <body>
+<!-- ===== 顶部导航栏 ===== -->
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background: linear-gradient(135deg, #ff6b35, #f7931e);">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="/">
             <i class="fas fa-utensils me-2"></i>
             <span class="d-none d-sm-inline">每日菜单</span>
             <span class="d-sm-none">🍱</span>
@@ -21,28 +22,49 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link active" href="#" onclick="loadTodayMenu()"><i class="fas fa-home"></i><span class="d-none d-md-inline ms-1">今日</span></a></li>
-                <li class="nav-item"><a class="nav-link" href="#" onclick="loadWeekMenu()"><i class="fas fa-calendar-week"></i><span class="d-none d-md-inline ms-1">本周</span></a></li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" onclick="loadTodayMenu()">
+                        <i class="fas fa-home"></i>
+                        <span class="d-none d-md-inline ms-1">今日</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="loadWeekMenu()">
+                        <i class="fas fa-calendar-week"></i>
+                        <span class="d-none d-md-inline ms-1">本周</span>
+                    </a>
+                </li>
             </ul>
             <div class="d-flex align-items-center gap-2">
+                <!-- 搜索 -->
                 <div class="d-none d-lg-block">
                     <div class="input-group input-group-sm">
                         <input type="text" class="form-control" placeholder="搜索菜品..." id="searchInput">
-                        <button class="btn btn-light" onclick="searchMenu()"><i class="fas fa-search"></i></button>
+                        <button class="btn btn-light" onclick="searchMenu()">
+                            <i class="fas fa-search"></i>
+                        </button>
                     </div>
                 </div>
+                <!-- 用户状态 -->
                 <div id="userStatus">
                     <button class="btn btn-light btn-sm" onclick="showLoginModal()" id="loginBtn">
-                        <i class="fas fa-sign-in-alt"></i><span class="d-none d-sm-inline ms-1">登录</span>
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span class="d-none d-sm-inline ms-1">登录</span>
                     </button>
                 </div>
-                <a href="/admin.html" class="btn btn-light btn-sm d-none" id="adminBtn"><i class="fas fa-cog"></i><span class="d-none d-sm-inline ms-1">管理</span></a>
+                <!-- 管理入口（登录后显示） -->
+                <a href="/admin.html" class="btn btn-light btn-sm d-none" id="adminBtn">
+                    <i class="fas fa-cog"></i>
+                    <span class="d-none d-sm-inline ms-1">管理</span>
+                </a>
             </div>
         </div>
     </div>
 </nav>
 
+<!-- ===== 主体内容 ===== -->
 <main class="container-fluid px-3 px-sm-4 px-md-5 py-3">
+    <!-- 日期选择器 -->
     <section class="row g-2 g-md-3 mb-4">
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
             <div class="input-group">
@@ -51,76 +73,112 @@
             </div>
         </div>
         <div class="col-6 col-sm-3 col-md-2">
-            <button class="btn btn-primary w-100" onclick="loadMenuByDate()"><i class="fas fa-search"></i><span class="d-none d-sm-inline ms-1">查看</span></button>
+            <button class="btn btn-primary w-100" onclick="loadMenuByDate()">
+                <i class="fas fa-search"></i>
+                <span class="d-none d-sm-inline ms-1">查看</span>
+            </button>
         </div>
         <div class="col-6 col-sm-3 col-md-2">
-            <button class="btn btn-success w-100" onclick="loadTodayMenu()"><i class="fas fa-utensils"></i><span class="d-none d-sm-inline ms-1">今日</span></button>
+            <button class="btn btn-success w-100" onclick="loadTodayMenu()">
+                <i class="fas fa-utensils"></i>
+                <span class="d-none d-sm-inline ms-1">今日</span>
+            </button>
         </div>
         <div class="col-12 col-sm-6 col-md-3 ms-auto">
             <div class="btn-group w-100">
-                <button class="btn btn-outline-secondary btn-sm active" onclick="changeView('grid')"><i class="fas fa-th"></i></button>
-                <button class="btn btn-outline-secondary btn-sm" onclick="changeView('list')"><i class="fas fa-list"></i></button>
+                <button class="btn btn-outline-secondary btn-sm active" onclick="changeView('grid')">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" onclick="changeView('list')">
+                    <i class="fas fa-list"></i>
+                </button>
             </div>
         </div>
     </section>
 
+    <!-- 分类筛选 -->
     <section class="mb-4 category-filter-wrapper">
         <div class="d-flex flex-wrap gap-2" id="categoryFilter">
             <button class="btn btn-sm btn-outline-primary active" data-category="all" onclick="filterByCategory('all')">全部</button>
         </div>
     </section>
 
+    <!-- 菜单展示 -->
     <section id="menuContainer" class="row g-3 g-md-4">
-        <!-- 动态加载 -->
+        <!-- 由 JavaScript 动态渲染 -->
     </section>
 
+    <!-- 加载更多 -->
     <div class="text-center my-4">
-        <button class="btn btn-outline-primary d-none" id="loadMoreBtn" onclick="loadMore()"><i class="fas fa-spinner fa-spin me-2"></i>加载更多</button>
+        <button class="btn btn-outline-primary d-none" id="loadMoreBtn" onclick="loadMore()">
+            <i class="fas fa-spinner fa-spin me-2"></i>加载更多
+        </button>
     </div>
 </main>
 
+<!-- ===== 底部 ===== -->
 <footer class="footer mt-auto py-3 bg-light">
     <div class="container-fluid text-center">
-        <span class="text-muted small"><i class="fas fa-heart text-danger"></i> 每日菜单 v2.0 | 健康饮食每一天</span>
+            <span class="text-muted small">
+                <i class="fas fa-heart text-danger"></i> 每日菜单 v2.0 | 健康饮食每一天
+            </span>
     </div>
 </footer>
 
-<!-- 登录模态框 -->
+<!-- ===== 登录模态框 ===== -->
 <div class="modal fade" id="loginModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title"><i class="fas fa-user-circle me-2"></i>登录</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-user-circle me-2"></i>登录</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
             <div class="modal-body">
                 <form id="loginForm" onsubmit="login(event)">
-                    <div class="mb-3"><label class="form-label">用户名</label><input type="text" class="form-control" id="username" required></div>
-                    <div class="mb-3"><label class="form-label">密码</label><input type="password" class="form-control" id="password" required></div>
-                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-sign-in-alt me-2"></i>登录</button>
+                    <div class="mb-3">
+                        <label class="form-label">用户名</label>
+                        <input type="text" class="form-control" id="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">密码</label>
+                        <input type="password" class="form-control" id="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-sign-in-alt me-2"></i>登录
+                    </button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 菜谱详情模态框 -->
+<!-- ===== 菜谱详情模态框 ===== -->
 <div class="modal fade" id="recipeModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
         <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title"><i class="fas fa-book-open me-2"></i><span id="recipeTitle">菜谱详情</span></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-book-open me-2"></i><span id="recipeTitle">菜谱详情</span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
             <div class="modal-body" id="recipeContent"></div>
         </div>
     </div>
 </div>
 
-<!-- Toast -->
+<!-- ===== Toast 通知 ===== -->
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index:1050">
     <div id="liveToast" class="toast align-items-center border-0" role="alert">
-        <div class="d-flex"><div class="toast-body" id="toastMessage"></div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>
+        <div class="d-flex">
+            <div class="toast-body" id="toastMessage"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
     </div>
 </div>
 
+<!-- ===== JavaScript ===== -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/js/api.js"></script>
 <script src="/js/utils.js"></script>
+<script src="/js/api.js"></script>
 <script src="/js/main.js"></script>
 </body>
 </html>

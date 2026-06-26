@@ -1,4 +1,5 @@
 -- schema.sql
+-- V1.0 初始化
 CREATE DATABASE IF NOT EXISTS daily_menu DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE daily_menu;
 
@@ -92,3 +93,15 @@ INSERT INTO `recipe` (`name`, `category_id`, `description`, `content`, `difficul
                                                                                                        ('麻婆豆腐', 1, '经典川菜，麻辣鲜香', '1. 豆腐切块焯水\n2. 肉末炒香加入豆瓣酱\n3. 加入豆腐炖煮\n4. 勾芡出锅', 'MEDIUM', 1),
                                                                                                        ('宫保鸡丁', 1, '酸甜微辣，下饭好菜', '1. 鸡胸肉切丁腌制\n2. 花生米炸香\n3. 调汁炒制\n4. 收汁出锅', 'MEDIUM', 1),
                                                                                                        ('清炒时蔬', 1, '清淡健康，保留原味', '1. 蔬菜洗净切段\n2. 热油快炒\n3. 调味出锅', 'EASY', 1);
+
+-- 2026年6月26日更新
+-- V1.1 表category增加type字段
+ALTER TABLE `category` ADD COLUMN `type` VARCHAR(20) DEFAULT 'MENU' COMMENT '分类类型: MENU-菜单分类, RECIPE-菜谱分类';
+UPDATE `category` SET `type` = 'MENU' WHERE `id` IN (1,2,3,4);
+UPDATE `category` SET `type` = 'RECIPE' WHERE `id` IN (5,6,7,8,9);
+
+-- admin123 的 BCrypt 加密值
+UPDATE `user` SET `password` = '$10$I/sNNMWqZawBMABYgmSd1emNWnfyohszTrtbqDi.4z51qK0xqKKy6' WHERE `username` = 'admin';
+
+-- user123 的 BCrypt 加密值
+UPDATE `user` SET `password` = '$10$K.i.a1BfKPSN79A3W9oWj.b3WdPDlKENfWnCYBExL2IKgI.ymBsUq' WHERE `username` = 'user';
