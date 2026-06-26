@@ -1,5 +1,6 @@
 package com.shubao.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import jakarta.validation.constraints.NotNull;
@@ -8,6 +9,7 @@ import java.time.LocalDate;
 @Data
 public class MenuCreateDTO {
     @NotNull(message = "日期不能为空")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
     @NotNull(message = "菜品名称不能为空")

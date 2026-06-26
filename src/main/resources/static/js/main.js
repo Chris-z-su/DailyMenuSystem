@@ -93,7 +93,7 @@ function renderMenus(menus) {
         grouped[cat].forEach((menu, i) => {
             const col = document.createElement('div');
             col.className = `col-6 col-sm-4 col-md-3 col-lg-3 col-xl-2`;
-            col.style.setProperty('--index', i + 1);
+            // 移除 style.setProperty('--index', i + 1)
             col.innerHTML = createMenuCard(menu);
             container.appendChild(col);
         });

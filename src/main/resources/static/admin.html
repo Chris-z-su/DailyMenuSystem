@@ -8,106 +8,208 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="/css/main.css" rel="stylesheet">
     <style>
-        .sidebar { min-height: 100vh; background: #2d3436; }
-        .sidebar .nav-link { color: #b2bec3; padding: 0.75rem 1rem; }
-        .sidebar .nav-link:hover { color: #fff; background: rgba(255,255,255,0.1); }
-        .sidebar .nav-link.active { color: #fff; background: rgba(255,255,255,0.15); }
-        .sidebar .nav-link i { width: 20px; }
-        .recipe-card { transition: all 0.3s; }
-        .recipe-card:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+        /* 侧边栏样式 */
+        .sidebar {
+            min-height: 100vh;
+            background: #2d3436;
+        }
+        .sidebar .nav-link {
+            color: #b2bec3;
+            padding: 0.75rem 1rem;
+            border-radius: 0;
+        }
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+        }
+        .sidebar .nav-link.active {
+            color: #fff;
+            background: rgba(255,255,255,0.15);
+        }
+        .sidebar .nav-link i {
+            width: 20px;
+        }
+        .sidebar .brand {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar .brand h6 {
+            color: #fff;
+            margin-top: 0.5rem;
+        }
+
+        /* 顶部导航栏 */
+        .top-bar {
+            background: white;
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .top-bar .page-title {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            padding: 1.5rem;
+        }
+
+        /* 菜谱卡片 */
+        .recipe-card {
+            transition: all 0.3s;
+            height: 100%;
+        }
+        .recipe-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        /* 移动端适配 */
         @media (max-width: 767px) {
-            .sidebar { position: fixed; top: 0; bottom: 0; left: 0; z-index: 1000; width: 280px; transform: translateX(-100%); transition: transform 0.3s; }
-            .sidebar.show { transform: translateX(0); }
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                z-index: 1000;
+                width: 280px;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                overflow-y: auto;
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .sidebar-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 999;
+                display: none;
+            }
+            .sidebar-overlay.show {
+                display: block;
+            }
+            .top-bar {
+                padding: 0.5rem 1rem;
+            }
+            .top-bar .page-title {
+                font-size: 1rem;
+            }
+            .main-content {
+                padding: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-<div class="container-fluid">
-    <div class="row">
-        <!-- ===== 侧边栏 ===== -->
-        <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebarMenu">
-            <div class="position-sticky pt-3">
-                <div class="text-center mb-4">
-                    <i class="fas fa-utensils fa-2x text-light"></i>
-                    <h6 class="text-light mt-2 d-none d-lg-block">菜单管理系统</h6>
-                </div>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#" onclick="switchTab('menu')">
-                            <i class="fas fa-utensils me-2"></i><span class="d-none d-lg-inline">菜单管理</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="switchTab('recipe')">
-                            <i class="fas fa-book me-2"></i><span class="d-none d-lg-inline">菜谱管理</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="switchTab('category')">
-                            <i class="fas fa-tags me-2"></i><span class="d-none d-lg-inline">分类管理</span>
-                        </a>
-                    </li>
-                    <li class="nav-item mt-4">
-                        <a class="nav-link text-danger" href="/" onclick="logout()">
-                            <i class="fas fa-sign-out-alt me-2"></i><span class="d-none d-lg-inline">退出</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+<!-- 侧边栏遮罩（移动端） -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-        <!-- ===== 主内容 ===== -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <!-- 头部 -->
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2" id="pageTitle">菜单管理</h1>
-                <div class="btn-toolbar">
-                    <button class="btn btn-sm btn-primary" id="addBtn" onclick="showAddMenuModal()">
-                        <i class="fas fa-plus me-1"></i>新增菜单
-                    </button>
-                </div>
-            </div>
+<div class="admin-wrapper">
+    <!-- ===== 侧边栏 ===== -->
+    <nav class="sidebar" id="sidebarMenu">
+        <div class="brand">
+            <i class="fas fa-utensils fa-2x text-light"></i>
+            <h6>菜单管理系统</h6>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="#" onclick="switchTab('menu')">
+                    <i class="fas fa-utensils me-2"></i>菜单管理
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="switchTab('recipe')">
+                    <i class="fas fa-book me-2"></i>菜谱管理
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="switchTab('category')">
+                    <i class="fas fa-tags me-2"></i>分类管理
+                </a>
+            </li>
+            <li class="nav-item" style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 1rem; padding-top: 1rem;">
+                <a class="nav-link" href="/" onclick="goHome(event)">
+                    <i class="fas fa-home me-2"></i>返回首页
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-danger" href="#" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>退出登录
+                </a>
+            </li>
+        </ul>
+    </nav>
 
-            <!-- ===== 菜单管理 Tab ===== -->
-            <div id="menuTab">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th class="d-none d-sm-table-cell">日期</th>
-                            <th>菜品</th>
-                            <th class="d-none d-md-table-cell">分类</th>
-                            <th class="d-none d-lg-table-cell">图片</th>
-                            <th>操作</th>
-                        </tr>
-                        </thead>
-                        <tbody id="menuTableBody"></tbody>
-                    </table>
-                </div>
-                <nav>
-                    <ul class="pagination justify-content-center flex-wrap" id="pagination"></ul>
-                </nav>
+    <!-- ===== 主内容 ===== -->
+    <div class="main-content">
+        <!-- 顶部栏 -->
+        <div class="top-bar">
+            <div class="d-flex align-items-center">
+                <!-- 移动端菜单切换按钮 -->
+                <button class="btn btn-sm btn-outline-secondary me-2 d-md-none" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="page-title" id="pageTitle">菜单管理</h1>
             </div>
+            <div>
+                <a href="/" class="btn btn-sm btn-outline-primary me-2" title="返回首页">
+                    <i class="fas fa-home"></i>
+                    <span class="d-none d-sm-inline">首页</span>
+                </a>
+                <button class="btn btn-sm btn-primary" id="addBtn" onclick="showAddMenuModal()">
+                    <i class="fas fa-plus me-1"></i>新增菜单
+                </button>
+            </div>
+        </div>
 
-            <!-- ===== 菜谱管理 Tab ===== -->
-            <div id="recipeTab" style="display:none;">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4><i class="fas fa-book me-2"></i>菜谱管理</h4>
-                    <button class="btn btn-primary btn-sm" onclick="showAddRecipeModal()">
-                        <i class="fas fa-plus me-1"></i>新增菜谱
-                    </button>
-                </div>
-                <div class="row g-3" id="recipeContainer"></div>
+        <!-- ===== 菜单管理 Tab ===== -->
+        <div id="menuTab">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th class="d-none d-sm-table-cell">日期</th>
+                        <th>菜品</th>
+                        <th class="d-none d-md-table-cell">分类</th>
+                        <th class="d-none d-lg-table-cell">图片</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="menuTableBody"></tbody>
+                </table>
             </div>
+            <nav>
+                <ul class="pagination justify-content-center flex-wrap" id="pagination"></ul>
+            </nav>
+        </div>
 
-            <!-- ===== 分类管理 Tab ===== -->
-            <div id="categoryTab" style="display:none;">
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>分类管理功能开发中...
-                </div>
+        <!-- ===== 菜谱管理 Tab ===== -->
+        <div id="recipeTab" style="display:none;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4><i class="fas fa-book me-2"></i>菜谱管理</h4>
+                <button class="btn btn-primary btn-sm" onclick="showAddRecipeModal()">
+                    <i class="fas fa-plus me-1"></i>新增菜谱
+                </button>
             </div>
-        </main>
+            <div class="row g-3" id="recipeContainer"></div>
+        </div>
+
+        <!-- ===== 分类管理 Tab ===== -->
+        <div id="categoryTab" style="display:none;">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>分类管理功能开发中...
+            </div>
+        </div>
     </div>
 </div>
 
@@ -136,7 +238,6 @@
                             <input type="text" class="form-control" id="menuName" required>
                         </div>
 
-                        <!-- 菜谱类型选择 -->
                         <div class="col-12">
                             <div class="card bg-light">
                                 <div class="card-body">
@@ -156,7 +257,6 @@
                             </div>
                         </div>
 
-                        <!-- 选择已有菜谱 -->
                         <div class="col-12" id="recipeSelectDiv">
                             <label class="form-label">选择菜谱</label>
                             <select class="form-select" id="menuRecipe">
@@ -164,13 +264,11 @@
                             </select>
                         </div>
 
-                        <!-- 自定义内容 -->
                         <div class="col-12" id="customContentDiv" style="display:none;">
                             <label class="form-label">自定义内容</label>
                             <textarea class="form-control" id="menuCustomContent" rows="3"></textarea>
                         </div>
 
-                        <!-- 新增菜谱 -->
                         <div class="col-12 d-none" id="newRecipeDiv">
                             <div class="card">
                                 <div class="card-header bg-primary text-white"><i class="fas fa-plus me-2"></i>新增菜谱</div>

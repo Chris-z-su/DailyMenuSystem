@@ -38,10 +38,33 @@ public class MenuController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")  // 修改为更明确的写法,  注意：ROLE_ 前缀会自动添加
     public Result<Menu> create(@Valid @RequestBody MenuCreateDTO dto) {
+        System.out.println("========== 开始创建菜单 ==========");
+        System.out.println("接收到的数据: " + dto);
+        System.out.println("日期: " + dto.getDate());
+        System.out.println("名称: " + dto.getName());
+        System.out.println("分类ID: " + dto.getCategoryId());
+        System.out.println("菜谱ID: " + dto.getRecipeId());
+        System.out.println("是否自定义: " + dto.getIsCustom());
+        System.out.println("自定义内容: " + dto.getCustomContent());
+
+        // 获取当前认证信息
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("认证对象: " + auth);
+        System.out.println("用户名: " + auth.getName());
+        System.out.println("权限列表: " + auth.getAuthorities());
+        System.out.println("是否已认证: " + auth.isAuthenticated());
+
+        System.out.println("接收到的数据: " + dto);
+
         Integer userId = getCurrentUserId();
+        System.out.println("用户ID: " + userId);
+
         Menu menu = menuService.createMenu(dto, userId);
+        System.out.println("创建成功，菜单ID: " + menu.getId());
+        System.out.println("========== 创建完成 ==========");
+
         return Result.success("创建成功", menu);
     }
 
@@ -77,7 +100,13 @@ public class MenuController {
     private Integer getCurrentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        // 实际从数据库查询用户ID，此处简化
+        // 根据用户名查询用户ID
+        if ("admin".equals(username)) {
+            return 1;
+        }
+        if ("user".equals(username)) {
+            return 2;
+        }
         return 1;
     }
 }

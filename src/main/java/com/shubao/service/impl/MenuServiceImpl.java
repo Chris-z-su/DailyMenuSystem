@@ -50,21 +50,30 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
 
     @Override
     public Menu createMenu(MenuCreateDTO dto, Integer userId) {
-        Menu menu = new Menu();
-        BeanUtil.copyProperties(dto, menu);
-        if (dto.getIsCustom() != null && dto.getIsCustom() == 1) {
-            menu.setRecipeId(null);
-        }
-        if (dto.getRecipeId() != null && dto.getIsCustom() == 0) {
-            Recipe recipe = recipeService.getById(dto.getRecipeId());
-            if (recipe == null) {
-                throw new RuntimeException("关联的菜谱不存在");
+        try {
+            System.out.println("Service层 - 开始创建菜单");
+            System.out.println("DTO: " + dto);
+
+            Menu menu = new Menu();
+            BeanUtil.copyProperties(dto, menu);
+            if (dto.getIsCustom() != null && dto.getIsCustom() == 1) {
+                menu.setRecipeId(null);
             }
+            if (dto.getRecipeId() != null && dto.getIsCustom() == 0) {
+                Recipe recipe = recipeService.getById(dto.getRecipeId());
+                if (recipe == null) {
+                    throw new RuntimeException("关联的菜谱不存在");
+                }
+            }
+            menu.setCreatedBy(userId);
+            menu.setUpdatedBy(userId);
+            this.save(menu);
+            return menu;
+        } catch (Exception e) {
+            System.err.println("Service层创建菜单失败");
+            e.printStackTrace();
+            throw e;
         }
-        menu.setCreatedBy(userId);
-        menu.setUpdatedBy(userId);
-        this.save(menu);
-        return menu;
     }
 
     @Override

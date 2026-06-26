@@ -34,6 +34,10 @@ public class AuthController {
         if (user == null || !passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             return Result.error("用户名或密码错误");
         }
+
+        // 添加日志查看角色
+        System.out.println("登录用户: " + user.getUsername() + ", 角色: " + user.getRole());
+
         String token = jwtUtil.generateToken(user.getUsername());
         Map<String, Object> data = new HashMap<>();
         data.put("token", token);

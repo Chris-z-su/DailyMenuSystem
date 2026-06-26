@@ -18,7 +18,7 @@ import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity   // 替代 @EnableGlobalMethodSecurity
+@EnableMethodSecurity   // 替代 @EnableGlobalMethodSecurity,启用方法级权限控制
 public class SecurityConfig {
 
     @Autowired

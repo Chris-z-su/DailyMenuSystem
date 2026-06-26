@@ -237,6 +237,8 @@ function toggleRecipeType(type) {
 function saveMenu(event) {
     event.preventDefault();
 
+    console.log('========== 开始保存菜单 ==========');
+
     const recipeType = document.querySelector('input[name="recipeType"]:checked');
     if (!recipeType) {
         showToast('请选择菜谱类型', 'warning');
@@ -253,6 +255,7 @@ function saveMenu(event) {
         isCustom: 0
     };
     const id = document.getElementById('menuId').value;
+    console.log('菜单ID:', id || '新增');
 
     if (recipeType.value === '0') {
         const recipeId = document.getElementById('menuRecipe').value;
@@ -263,12 +266,16 @@ function saveMenu(event) {
         menuData.recipeId = parseInt(recipeId);
         menuData.isCustom = 0;
         menuData.customContent = null;
+        console.log('使用已有菜谱，ID:', recipeId);
     } else if (recipeType.value === '1') {
         const customContent = document.getElementById('menuCustomContent').value;
         menuData.recipeId = null;
         menuData.isCustom = 1;
         menuData.customContent = customContent || '暂无内容';
+        console.log('自定义内容:', customContent);
     } else if (recipeType.value === '2') {
+        console.log('新增菜谱并关联');
+
         const recipeData = {
             name: document.getElementById('newRecipeName').value,
             categoryId: document.getElementById('newRecipeCategory').value,
@@ -280,6 +287,8 @@ function saveMenu(event) {
             isPublic: document.getElementById('newRecipePublic').checked ? 1 : 0,
             imageUrls: []
         };
+        console.log('新菜谱数据:', recipeData);
+
         if (!recipeData.name) {
             showToast('请输入菜谱名称', 'warning');
             return;
@@ -295,6 +304,7 @@ function saveMenu(event) {
         return;
     }
 
+    console.log('最终提交的数据:', menuData);
     saveMenuData(id, menuData);
 }
 
@@ -523,5 +533,66 @@ function logout() {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         window.location.href = '/';
+    }
+}
+
+// ==========================================
+// ===== 页面导航 =====
+// ==========================================
+
+/**
+ * 返回首页
+ */
+function goHome(event) {
+    if (event) event.preventDefault();
+    window.location.href = '/';
+}
+
+/**
+ * 切换侧边栏（移动端）
+ */
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebarMenu');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.toggle('show');
+    overlay.classList.toggle('show');
+}
+
+/**
+ * 切换 Tab
+ */
+function switchTab(tab) {
+    // 更新侧边栏激活状态
+    document.querySelectorAll('.sidebar .nav-link').forEach(el => el.classList.remove('active'));
+
+    // 更新页面标题和按钮
+    if (tab === 'menu') {
+        document.getElementById('pageTitle').textContent = '菜单管理';
+        document.getElementById('addBtn').style.display = '';
+        document.getElementById('menuTab').style.display = '';
+        document.getElementById('recipeTab').style.display = 'none';
+        document.getElementById('categoryTab').style.display = 'none';
+        document.querySelector('.sidebar .nav-link:nth-child(1)').classList.add('active');
+        loadMenus();
+    } else if (tab === 'recipe') {
+        document.getElementById('pageTitle').textContent = '菜谱管理';
+        document.getElementById('addBtn').style.display = 'none';
+        document.getElementById('menuTab').style.display = 'none';
+        document.getElementById('recipeTab').style.display = '';
+        document.getElementById('categoryTab').style.display = 'none';
+        document.querySelector('.sidebar .nav-link:nth-child(2)').classList.add('active');
+        loadRecipes();
+    } else if (tab === 'category') {
+        document.getElementById('pageTitle').textContent = '分类管理';
+        document.getElementById('addBtn').style.display = 'none';
+        document.getElementById('menuTab').style.display = 'none';
+        document.getElementById('recipeTab').style.display = 'none';
+        document.getElementById('categoryTab').style.display = '';
+        document.querySelector('.sidebar .nav-link:nth-child(3)').classList.add('active');
+    }
+
+    // 移动端关闭侧边栏
+    if (window.innerWidth < 768) {
+        toggleSidebar();
     }
 }

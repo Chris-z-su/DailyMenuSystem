@@ -85,3 +85,10 @@ src/main/resources/static/
     ├── default-food.png
     └── default-recipe.png
 ```
+
+## 三、清理缓存
+```js
+localStorage.removeItem('token');
+localStorage.removeItem('user');
+location.reload();
+```
