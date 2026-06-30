@@ -55,9 +55,9 @@ jwt:
 upload:
   # 图片存储根目录（Linux/Windows 通用）
   # Linux
-  base-path: /opt/demo/backend/DailyMenuSystem/images
+#  base-path: /opt/demo/backend/DailyMenuSystem/images
   # Windows
-#  base-path: "D:/DailyMenuSystem/images"
+  base-path: "D:/DailyMenuSystem/images"
   #  base-path: D:\\DailyMenuSystem\\images
   # 访问 URL 前缀
   access-url: /images/
